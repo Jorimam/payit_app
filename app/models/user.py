@@ -15,6 +15,8 @@ User
 from sqlalchemy import Integer, Column, String, DateTime, Enum, func
 from .base import Base
 from ..enums import Gender, Category
+from sqlalchemy.orm import relationship
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -28,3 +30,5 @@ class User(Base):
     location = Column(String(255), min_length=3, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    products = relationship("Product", back_populates="user", cascade="all, delete")
