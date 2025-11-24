@@ -35,12 +35,11 @@ def create(user_request: UserCreateRequest, db: Session = Depends(get_db)):
     new_user = User(
         **user_request.dict(exclude={"password", "confirm_password", "gender", "category"}),
         password=hashed_password.decode(),
-        gender = user_request.gender.value,
-        category = user_request.category.value
+        gender = user_request.gender.value
     )
 
     try:  
-        db.add(new_user)
+        db.add(new_user)  
         db.commit()
         db.refresh(new_user)
 

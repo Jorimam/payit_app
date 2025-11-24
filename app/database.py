@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 DB_USER = os.getenv('DB_USER')
 DB_PORT = os.getenv('DB_PORT')
@@ -18,6 +18,7 @@ Session = sessionmaker(
     autoflush=False,
     bind=engine
 )
+Base = declarative_base()
 
 def get_db():
     pass

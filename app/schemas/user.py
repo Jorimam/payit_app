@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr, model_validator, field_validator
 from typing import List, Optional, Dict
-from ..enums import Gender, Category
+from ..enums import Gender
 import re
 
 class User(BaseModel):
@@ -9,7 +9,6 @@ class User(BaseModel):
     phone: str
     email: str
     gender: str
-    category: str
     location: str
 
 class UserCreateRequest(BaseModel):
@@ -19,7 +18,6 @@ class UserCreateRequest(BaseModel):
     password: str = Field(min_length=6)
     confirm_password: str
     gender: Gender
-    category: Category
     location: str = Field(min_length=3)
 
     @field_validator('phone')
@@ -51,7 +49,6 @@ class UserUpdateRequest(UserCreateRequest):
     phone: Optional[str] = None
     email: Optional[EmailStr] = None
     gender: Optional[Gender] = None
-    category: Optional[Category] = None
     location: Optional[str] = None
 
     @model_validator(mode='after')

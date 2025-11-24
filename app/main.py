@@ -8,6 +8,7 @@ from .routes.product import router as product_routes
 from .routes.auth import router as auth
 import logging
 from .routes import auth
+from .schemas.product_category import init_product_categories
 
 
 logger = logging.getLogger(__name__)
@@ -32,3 +33,8 @@ def home():
         "message": "Hello world"
     }
 
+
+@app.on_event("startup")
+def startup_event():
+    Base.metadata.create_all(bind=engine)
+    init_product_categories()
