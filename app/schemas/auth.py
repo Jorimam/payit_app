@@ -18,6 +18,8 @@ def validate_password(cls, value:str):
             raise ValueError('password must contain atleast one special character')
        return value 
 
+
+
 class LoginRespose(BaseModel):
     access_token:str 
     token_type:str='bearer'

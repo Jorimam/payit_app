@@ -38,6 +38,12 @@ class UserCreateRequest(BaseModel):
             raise ValueError('password must contain atleast one special character')
         return value
     
+    @field_validator('name')
+    def validate_name(cls, value:str):
+        if not value.strip():
+            raise ValueError("Ener a valid  name. Field cannot be empty")
+        return value
+     
     @model_validator(mode='after')
     def validate_confirm_password(self):
         if self.password != self.confirm_password:

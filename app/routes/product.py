@@ -9,6 +9,7 @@ from typing import List
 from ..models.user import User
 from ..auth.jwt import get_current_user 
 from ..models.farmers import Farmer
+from ..models.buyers import Buyer
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,15 @@ def raiseError(e):
             "timestamp": f"{datetime.utcnow()}"
         }
     )
+def check_farmer(db: Session, user_id: int):
+    farmer = db.query(Farmer).filter(Farmer.user_id == user_id).first()
+    if not farmer:
+        farmer = Farmer(user_id=user_id)
+        db.add(farmer)
+        db.commit()
+        db.refresh(farmer)  
+    return farmer
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProductResponse)
 def create_product(
     product_request: ProductCreate,
@@ -34,17 +44,17 @@ def create_product(
     current_user: User = Depends(get_current_user)
 ):
 
-    farmer = ensure_farmer(db, current_user.id)
+  
+    farmer = check_farmer(db, current_user.id)
 
-    
+   
     product_exists = db.query(Product).filter(Product.name == product_request.name).first()
     if product_exists:
         raiseError(f"Product name '{product_request.name}' already exists")
 
-    
+ 
     new_product = Product(
-        user_id=current_user.id,
-        farmer_id=farmer.id,                      
+        farmer_id=farmer.id,
         name=product_request.name,
         quantity=product_request.quantity,
         price=product_request.price,
@@ -56,53 +66,9 @@ def create_product(
         db.commit()
         db.refresh(new_product)
         return new_product
-
     except Exception as e:
         raiseError(e)
-def ensure_farmer(db: Session, user_id: int) -> Farmer:
-    farmer = db.query(Farmer).filter(Farmer.user_id == user_id).first()
-    if not farmer:
-        farmer = Farmer(user_id=user_id)
-        db.add(farmer)
-        db.commit()
-        db.refresh(farmer)
-    return farmer
 
-# @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProductResponse)
-# def create_product(product_request: ProductCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-   
-
-
-#     product_exists = db.query(Product).filter(Product.name == product_request.name).first()
-
-#     if product_exists:
-#         raiseError(f"Product name '{product_request.name}' already exists")
-#     new_product = Product(
-#         user_id=current_user.id,
-#         name=product_request.name,
-#         quantity=product_request.quantity,
-#         price=product_request.price,
-#         category_id=product_request.category_id
-#     )
-#     try:  
-#         db.add(new_product)
-#         db.commit()
-#         db.refresh(new_product)
-
-#         return new_product
-        
-#     except Exception as e:
-#         raiseError(e)
-# def ensure_farmer(db, user_id: int):
-    
-
-#     farmer = db.query(Farmer).filter(Farmer.user_id == user_id).first()
-#     if not farmer:
-#         farmer = Farmer(user_id=user_id)
-#         db.add(farmer)
-#         db.commit()
-#         db.refresh(farmer)
-#     return farmer
 
 @router.get("/", response_model=List[ProductResponse])
 def get_all_products(db: Session = Depends(get_db)):
@@ -169,45 +135,46 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
 @router.get("/user/{user_id}", response_model=List[ProductResponse])
 def get_products_by_user(user_id: int, db: Session = Depends(get_db)):
     try:
-        
-        products = db.query(Product).filter(Product.user_id == user_id).all()
-        return products 
+        farmer = db.query(Farmer).filter(Farmer.user_id == user_id).first()
+        if not farmer:
+            return []
+        products = db.query(Product).filter(Product.farmer_id == farmer.id).all()   
+        return products
     except Exception as e:
         raiseError(f"Failed to retrieve products for user {user_id}: {e}")
 
-# def ensure_buyer(db, user_id: int):
-#     from ..models.buyer import Buyer
+def ensure_buyer(db, user_id: int):
 
-#     buyer = db.query(Buyer).filter(Buyer.user_id == user_id).first()
-#     if not buyer:
-#         buyer = Buyer(user_id=user_id)
-#         db.add(buyer)
-#         db.commit()
-#         db.refresh(buyer)
-#     return buyer
-# @router.post("/buy/{product_id}", status_code=status.HTTP_200_OK)
-# def buy_product(product_id: int, quantity: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-#     product = db.query(Product).filter(Product.id == product_id).first()
+    buyer = db.query(Buyer).filter(Buyer.user_id == user_id).first()
+    if not buyer:
+        buyer = Buyer(user_id=user_id)
+        db.add(buyer)
+        db.commit()
+        db.refresh(buyer)
+    return buyer
+@router.post("/buy/{product_id}", status_code=status.HTTP_200_OK)
+def buy_product(product_id: int, quantity: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    product = db.query(Product).filter(Product.id == product_id).first()
 
-#     if not product:
-#         raiseError(f"Product with id {product_id} not found")
+    if not product:
+        raiseError(f"Product with id {product_id} not found")
     
-#     if product.quantity < quantity:
-#         raiseError(f"Insufficient quantity for product id {product_id}. Available: {product.quantity}, Requested: {quantity}")
+    if product.quantity < quantity:
+        raiseError(f"Insufficient quantity for product id {product_id}. Available: {product.quantity}, Requested: {quantity}")
     
-#     try:
-#         product.quantity -= quantity
-#         db.commit()
-#         db.refresh(product)
+    try:
+        product.quantity -= quantity
+        db.commit()
+        db.refresh(product)
 
-#         ensure_buyer(db, current_user.id)
+        ensure_buyer(db, current_user.id)
 
-#         return {
-#             "status": "success",
-#             "message": f"Purchased {quantity} of product id {product_id}",
-#             "timestamp": f"{datetime.utcnow()}"
-#         }
+        return {
+            "status": "success",
+            "message": f"Purchased {quantity} of product id {product_id}",
+            "timestamp": f"{datetime.utcnow()}"
+        }
         
-#     except Exception as e:
-#         db.rollback()
-#         raiseError(f"Failed to purchase product: {e}")
+    except Exception as e:
+        db.rollback()
+        raiseError(f"Failed to purchase product: {e}")

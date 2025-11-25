@@ -14,28 +14,31 @@ class ProductCreate(BaseModel):
     name: str = Field(min_length=3, max_length=50)
     quantity: DECIMAL
     price: DECIMAL
-    ProductCategory: ProductCategoryEnum
+    category_id: int
 
+    model_config = {
+        "from_attributes": True
+    }
 class ProductResponse(BaseModel):
     id: int
     name:str = Field(min_length=3, max_length=20)
     price: Decimal
     quantity: int
-    ProductCategory: ProductCategoryEnum
+    category_id: int
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    user_id: int
+    farmer_id: int
 
+    model_config = {
+        "from_attributes": True
+    }
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=20) 
     price: Optional[Decimal] = None
     quantity: Optional[int] = None
-    category: Optional[ProductCategoryEnum] = None
+    category_id: Optional[int] = None
 
-class Config:
-        
-        from_attributes = True 
-     
-
-    
+    model_config = {
+        "from_attributes": True
+    }

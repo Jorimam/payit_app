@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from .base import Base
 from .farmers import Farmer
+from ..enums import ProductCategoryEnum
 
 
 class Product(Base):
