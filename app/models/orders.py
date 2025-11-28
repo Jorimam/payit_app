@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, func, Float, DECIMAL
 from sqlalchemy.orm import relationship
 from .base import Base
-# from ..enums import ProductCategory
+from ..enums import OrderStatusEnum
 
 class Orders(Base):
     __tablename__ = "orders"
@@ -12,7 +12,7 @@ class Orders(Base):
     quantity = Column(Float, nullable=False)
     unit_price = Column(DECIMAL(10,2), nullable=False)
     total_price = Column(DECIMAL(10,2), nullable=False)
-    order_status = Column(String(50), nullable=False, default="pending")
+    order_status = Column(Enum(OrderStatusEnum), default=OrderStatusEnum.pending, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

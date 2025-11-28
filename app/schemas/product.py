@@ -1,13 +1,7 @@
-from pydantic import BaseModel, Field
 from datetime import datetime
-from pydantic import BaseModel, Field, model_validator, field_validator
-from typing import List, Optional, Dict
-from ..enums import Gender
-import re
+from pydantic import BaseModel, Field
+from typing import List, Optional
 from decimal import Decimal as DECIMAL
-from decimal import Decimal
-from ..enums import ProductCategoryEnum
-from enum import Enum
 
 
 class ProductCreate(BaseModel):
@@ -19,12 +13,7 @@ class ProductCreate(BaseModel):
     model_config = {
         "from_attributes": True
     }
-class ProductResponse(BaseModel):
-    id: int
-    name:str = Field(min_length=3, max_length=20)
-    price: Decimal
-    quantity: int
-    category_id: int
+class ProductResponse(ProductCreate):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     farmer_id: int
@@ -35,7 +24,7 @@ class ProductResponse(BaseModel):
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=20) 
-    price: Optional[Decimal] = None
+    price: Optional[DECIMAL] = None
     quantity: Optional[int] = None
     category_id: Optional[int] = None
 

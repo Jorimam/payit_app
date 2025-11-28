@@ -19,3 +19,15 @@ class ProductCategoryEnum(str, Enum):
     livestock = "livestock"
     latex = "latex"
     others = "others"
+
+class OrderStatusEnum(str, Enum):
+    pending = "pending"
+    processing = "processing"
+    delivered = "delivered"
+    cancelled = "cancelled"
+
+
+class PaymentTypeEnum(str, Enum):
+    card = "card"
+    transfer = "transfer"
+    wallet = "wallet"
