@@ -4,15 +4,22 @@ from ..database import get_db
 from ..models.user import User
 from datetime import datetime
 import logging
+import pymysql 
 import bcrypt
 from ..schemas.auth import LoginRequest, LoginRespose
 from ..auth.jwt import create_access_token
+from ..config.oauth import oauth    
+from fastapi.responses import RedirectResponse
+from fastapi import Request
+from fastapi.staticfiles import StaticFiles
+from ..enums import Gender, ProductCategoryEnum
+
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/auth",
-    tags=["Auth"]
+    tags=["auth"]
 )
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginRespose)

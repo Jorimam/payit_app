@@ -12,9 +12,10 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
-      # - JWT_SECRET_KEY=$(openssl rand -hex 32)
-      # - JWT_EXPIRATION_MINUTES=5
-      # - JWT_ALGORITHM=HS256
+      - AUTH_DOMAIN=${AUTH_DOMAIN}
+      - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - AUTH_CLIENT_SECRET=${AUTH_CLIENT_SECRET}
+      - AUTH_CLIENT_CALLBACK_URL=${AUTH_CLIENT_CALLBACK_URL}
     volumes:
       - ./app:/app/app
     depends_on:
