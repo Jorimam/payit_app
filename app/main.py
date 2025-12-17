@@ -73,7 +73,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def home():
     return {
         "status": "success",
-        "message": "Hello world"
+        "message": "Hello world or Logout successfully"
     }
 
 

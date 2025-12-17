@@ -116,17 +116,19 @@ def partial_update_user(user_id: int, user_update: UserUpdateRequest, db: Sessio
     
     update_data = user_update.model_dump(exclude_unset=True) 
 
-    if 'gender' in update_data and update_data['gender'] is not None:
-        update_data['gender'] = update_data['gender'].value
-    if 'category' in update_data and update_data['category'] is not None:
-        update_data['category'] = update_data['category'].value
+    # if 'gender' in update_data and update_data['gender'] is not None:
+    #     update_data['gender'] = update_data['gender'].value
+    # if 'category' in update_data and update_data['category'] is not None:
+    #     update_data['category'] = update_data['category'].value
     
     try:
-        user_query.update(update_data, synchronize_session=False)
+        # user_query.update(update_data, synchronize_session=False)
+        for key, value in update_data.items():
+            setattr(existing_user, key, value)
         db.commit()
         db.refresh(existing_user)
         
         return existing_user 
         
     except Exception as e:
-        raiseError(f"Failed to patch update user: {e}")
+        raiseError(f"Failed to update user: {e}")
