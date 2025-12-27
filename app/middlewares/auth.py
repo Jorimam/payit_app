@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from ..auth.jwt import verify_access_token
 from ..models.user import User
-import logging
+
+
+
 
 
 
@@ -48,7 +50,7 @@ class JWTBearer(HTTPBearer):
         else:
             raiseHttpException("invalid authorization code")
 
-    def verify_jwt(self, token: str, db: Session = Depends(get_db)):
+    def verify_jwt(self, token: str, db: Session):
         try:
             payload = verify_access_token(token)
             user_id = payload.get('sub')

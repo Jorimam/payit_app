@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.user import User
 from datetime import datetime
-import logging
-import pymysql 
+import logging 
 import bcrypt
 from ..schemas.auth import LoginRequest, LoginRespose
 from ..auth.jwt import create_access_token
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"]
+    tags=["Auth"]
 )
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginRespose)
@@ -38,7 +37,7 @@ def login(login_request:LoginRequest, db:Session = Depends(get_db)):
    claims = {
         'sub':str(user_exists.id),
         'email':user_exists.email,
-        "user_id": str(user_exists.id)
+        # "user_id": str(user_exists.id)
     }
 
    access_token = create_access_token(claims)
