@@ -8,6 +8,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, nullable=False, index=True)
     name = Column(String(30), min_length=3, max_length=30, nullable=False)
+    # lname = Column(String(30), min_length=3, max_length=30, nullable=True)
     phone = Column(String(20), unique=True, min_length=11, nullable=False)
     email = Column(String(100), unique=True, nullable=False, index=True)
     password = Column(String(100), nullable=False) #assignment, set boundaries

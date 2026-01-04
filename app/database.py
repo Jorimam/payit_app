@@ -1,12 +1,15 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
 
-DB_USER = os.getenv('DB_USER')
-DB_PORT = os.getenv('DB_PORT')
-DB_HOST = os.getenv('DB_HOST')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_DATABASE = os.getenv('DB_DATABASE')
+load_dotenv()
+
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PORT = int(os.getenv('DB_PORT', 3306))
+DB_HOST = os.getenv('DB_HOST', 'payit_db')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+DB_DATABASE = os.getenv('DB_DATABASE', 'payit')
 
 SQLALCHEMY_DB_URL = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}'
 

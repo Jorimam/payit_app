@@ -7,7 +7,7 @@ from decimal import Decimal as DECIMAL
 class ProductCreate(BaseModel):
     name: str = Field(min_length=3, max_length=50)
     quantity: DECIMAL
-    price: DECIMAL
+    unit_price: DECIMAL
     category_id: int
 
     model_config = {
@@ -24,7 +24,7 @@ class ProductResponse(ProductCreate):
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=20) 
-    price: Optional[DECIMAL] = None
+    unit_price: Optional[DECIMAL] = None
     quantity: Optional[int] = None
     category_id: Optional[int] = None
 
